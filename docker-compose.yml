@@ -1,0 +1,121 @@
+version: '3.8'
+
+networks:
+  mcp-network:
+    driver: bridge
+
+services:
+  # 1. FileSystem MCP
+  filesystem:
+    build:
+      context: ./mcp-sse-proxy
+      dockerfile: Dockerfile
+    command: ["npx", "-y", "@modelcontextprotocol/server-filesystem", "/app/AI", "/app/GIT"]
+    ports:
+      - "8101:8080"
+    volumes:
+      - ~/AI:/app/AI
+      - ~/GIT:/app/GIT
+    networks:
+      - mcp-network
+    restart: unless-stopped
+    environment:
+      - PORT=8080
+
+  # 2. Google Search MCP
+  google-search:
+    build:
+      context: ./mcp-google-search
+      dockerfile: Dockerfile
+    ports:
+      - "8102:8080"
+    networks:
+      - mcp-network
+    restart: unless-stopped
+    environment:
+      - GOOGLE_API_KEY=${GOOGLE_API_KEY}
+      - CUSTOM_SEARCH_ENGINE_ID=${CUSTOM_SEARCH_ENGINE_ID}
+      - PORT=8080
+
+  # 3. Calculator MCP (Custom python evaluation)
+  calculator:
+    build:
+      context: ./mcp-calculator
+    ports:
+      - "8103:8080"
+    networks:
+      - mcp-network
+    restart: unless-stopped
+    environment:
+      - PORT=8080
+
+  # 4. Memory MCP
+  memory:
+    build:
+      context: ./mcp-sse-proxy
+      dockerfile: Dockerfile
+    command: ["npx", "-y", "@modelcontextprotocol/server-memory"]
+    ports:
+      - "8104:8080"
+    networks:
+      - mcp-network
+    restart: unless-stopped
+    environment:
+      - PORT=8080
+
+  # 5. GitHub MCP
+  github:
+    build:
+      context: ./mcp-sse-proxy
+      dockerfile: Dockerfile
+    command: ["npx", "-y", "@modelcontextprotocol/server-github"]
+    ports:
+      - "8105:8080"
+    networks:
+      - mcp-network
+    restart: unless-stopped
+    environment:
+      - GITHUB_PERSONAL_ACCESS_TOKEN=${GITHUB_PERSONAL_ACCESS_TOKEN}
+      - PORT=8080
+
+  # 6. SQLite MCP
+  sqlite:
+    build:
+      context: ./mcp-sse-proxy
+      dockerfile: Dockerfile
+    command: ["npx", "-y", "@modelcontextprotocol/server-sqlite", "/app/data/mcp.db"]
+    ports:
+      - "8106:8080"
+    volumes:
+      - ./data:/app/data
+    networks:
+      - mcp-network
+    restart: unless-stopped
+    environment:
+      - PORT=8080
+
+  # 7. Browser Automation MCP (Puppeteer)
+  puppeteer:
+    build:
+      context: ./mcp-sse-proxy
+      dockerfile: Dockerfile.puppeteer
+    ports:
+      - "8107:8080"
+    networks:
+      - mcp-network
+    restart: unless-stopped
+    environment:
+      - PORT=8080
+
+  # 8. Sandbox Shell MCP (Command Execution)
+  shell:
+    build:
+      context: ./mcp-shell
+      dockerfile: Dockerfile
+    ports:
+      - "8108:8080"
+    networks:
+      - mcp-network
+    restart: unless-stopped
+    environment:
+      - PORT=8080

@@ -1,0 +1,28 @@
+{
+  "mcpServers": {
+    "local-filesystem": {
+      "url": "http://localhost:8101/sse"
+    },
+    "local-google-search": {
+      "url": "http://localhost:8102/sse"
+    },
+    "local-calculator": {
+      "url": "http://localhost:8103/sse"
+    },
+    "local-memory": {
+      "url": "http://localhost:8104/sse"
+    },
+    "local-github": {
+      "url": "http://localhost:8105/sse"
+    },
+    "local-sqlite": {
+      "url": "http://localhost:8106/sse"
+    },
+    "local-browser": {
+      "url": "http://localhost:8107/sse"
+    },
+    "local-sandbox-shell": {
+      "url": "http://localhost:8108/sse"
+    }
+  }
+}
