@@ -1,0 +1,21 @@
+{
+  "name": "mcp-sse-proxy",
+  "version": "1.0.0",
+  "description": "A node application that wraps an MCP stdio tool and exposes it as an SSE server.",
+  "main": "server.js",
+  "type": "module",
+  "scripts": {
+    "start": "node server.js",
+    "test": "jest"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.0.1",
+    "cross-spawn": "^7.0.3",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2"
+  },
+  "devDependencies": {
+    "jest": "^29.7.0",
+    "supertest": "^7.0.0"
+  }
+}

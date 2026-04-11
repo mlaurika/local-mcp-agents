@@ -1,0 +1,13 @@
+{
+  "name": "mcp-calculator",
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.0.1",
+    "express": "^4.19.2",
+    "mathjs": "^13.2.0"
+  }
+}

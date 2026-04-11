@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MCP Swarm Health Dashboard</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="background-animation"></div>
+    
+    <div class="dashboard-container">
+        <header class="glass-header">
+            <div class="title-wrap">
+                <h1>MCP Swarm Overview</h1>
+                <p>Local Agent Architecture Status</p>
+            </div>
+            <div class="global-status" id="globalStatus">
+                <span class="status-dot pulsing"></span>
+                <span class="status-text">Scanning...</span>
+            </div>
+        </header>
+
+        <main class="grid-layout" id="agentGrid">
+            <!-- Agent Cards will be injected here via JavaScript -->
+        </main>
+        
+        <footer>
+            <button id="refreshBtn" class="refresh-btn">Force Refresh</button>
+            <p class="timestamp">Last automated scan: <span id="lastScanTime">--</span></p>
+        </footer>
+    </div>
+
+    <script src="/js/app.js"></script>
+</body>
+</html>

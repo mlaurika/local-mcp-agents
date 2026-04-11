@@ -1,0 +1,27 @@
+FROM node:20-alpine
+
+WORKDIR /app
+
+# Install Chromium and dependencies for Puppeteer
+RUN apk add --no-cache \
+      chromium \
+      nss \
+      freetype \
+      harfbuzz \
+      ca-certificates \
+      ttf-freefont \
+      git \
+      python3 \
+      bash
+
+# Tell Puppeteer to skip downloading Chrome and use the Alpine one
+ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true \
+    PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium-browser
+
+COPY package.json ./
+RUN npm install
+
+COPY server.js ./
+
+# The entrypoint launches the proxy wrapping the official puppeteer MCP server
+ENTRYPOINT ["node", "server.js", "npx", "-y", "@modelcontextprotocol/server-puppeteer"]

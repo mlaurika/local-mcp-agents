@@ -65,9 +65,9 @@ services:
   # 6. SQLite MCP
   sqlite:
     build:
-      context: ./mcp-sse-proxy
+      context: ./mcp-sqlite
       dockerfile: Dockerfile
-    command: ["npx", "-y", "@modelcontextprotocol/server-sqlite", "/app/data/mcp.db"]
+    command: ["mcp-server-sqlite", "--db-path", "/app/data/mcp.db"]
     ports:
       - "8106:8080"
     volumes:
