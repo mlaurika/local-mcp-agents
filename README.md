@@ -24,7 +24,7 @@ All servers mount their communication directly over HTTP/SSE.
 | Tool | Internal Container Usage | Host Mapped Port | Notes |
 |------|-----------|-----------|-------|
 | 📂 **FileSystem** | `@modelcontextprotocol/server-filesystem` | `localhost:8101` | Mapped restrictively to `~/AI` and `~/GIT`. |
-| 🔍 **Google Search** | Custom Google Search implementation | `localhost:8102` | Needs `GOOGLE_API_KEY` and `CUSTOM_SEARCH_ENGINE_ID` in `.env`. |
+| 🦁 **Brave Search** | `@modelcontextprotocol/server-brave-search` | `localhost:8102` | Needs `BRAVE_API_KEY` in `.env`. |
 | 🧮 **Calculator** | Custom Python Evaluator Server | `localhost:8103` | Safe python arithmetic evaluation. |
 | 🧠 **Memory** | `@modelcontextprotocol/server-memory` | `localhost:8104` | Knowledge graph memory for casual info tracking. |
 | 🐙 **GitHub** | `@modelcontextprotocol/server-github` | `localhost:8105` | Interacts with github repos; needs `GITHUB_PERSONAL_ACCESS_TOKEN`. |

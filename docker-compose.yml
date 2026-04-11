@@ -22,21 +22,6 @@ services:
     environment:
       - PORT=8080
 
-  # 2. Google Search MCP
-  google-search:
-    build:
-      context: ./mcp-google-search
-      dockerfile: Dockerfile
-    ports:
-      - "8102:8080"
-    networks:
-      - mcp-network
-    restart: unless-stopped
-    environment:
-      - GOOGLE_API_KEY=${GOOGLE_API_KEY}
-      - CUSTOM_SEARCH_ENGINE_ID=${CUSTOM_SEARCH_ENGINE_ID}
-      - PORT=8080
-
   # 3. Calculator MCP (Custom python evaluation)
   calculator:
     build:
@@ -118,4 +103,19 @@ services:
       - mcp-network
     restart: unless-stopped
     environment:
+      - PORT=8080
+
+  # 9. Brave Search MCP
+  brave-search:
+    build:
+      context: ./mcp-sse-proxy
+      dockerfile: Dockerfile
+    command: ["npx", "-y", "@modelcontextprotocol/server-brave-search"]
+    ports:
+      - "8102:8080"
+    networks:
+      - mcp-network
+    restart: unless-stopped
+    environment:
+      - BRAVE_API_KEY=${BRAVE_API_KEY}
       - PORT=8080

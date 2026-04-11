@@ -3,9 +3,10 @@
     "local-filesystem": {
       "url": "http://localhost:8101/sse"
     },
-    "local-google-search": {
+    "local-brave-search": {
       "url": "http://localhost:8102/sse"
     },
+
     "local-calculator": {
       "url": "http://localhost:8103/sse"
     },
