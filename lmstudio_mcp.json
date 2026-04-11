@@ -6,7 +6,6 @@
     "local-brave-search": {
       "url": "http://localhost:8102/sse"
     },
-
     "local-calculator": {
       "url": "http://localhost:8103/sse"
     },
