@@ -16,45 +16,55 @@ if (!cmd) {
 // Map of sessionId -> express response object for SSE
 const clients = new Map();
 
-// Start the underlying MCP Stdio server
-console.log(`Starting MCP server: ${cmd} ${args.join(' ')}`);
-const child = spawn(cmd, args, {
-    stdio: ['pipe', 'pipe', 'pipe'],
-    shell: true
-});
+let child = null;
+let idleTimeout = null;
 
-child.on('error', (err) => console.error('[Child Error]', err));
-child.stderr.on('data', (data) => console.error('[Child Log]', data.toString().trim()));
+function spawnChild() {
+    if (child) return;
+    
+    console.log(`[Proxy] Waking up MCP process: ${cmd} ${args.join(' ')}`);
+    child = spawn(cmd, args, {
+        stdio: ['pipe', 'pipe', 'pipe'],
+        shell: true
+    });
 
-// Listen for stdout from the child process (newline-delimited JSON RPC messages)
-let buffer = '';
-child.stdout.on('data', (data) => {
-    buffer += data.toString();
-    let boundary = buffer.indexOf('\n');
-    while (boundary !== -1) {
-        const line = buffer.slice(0, boundary).trim();
-        buffer = buffer.slice(boundary + 1);
-        boundary = buffer.indexOf('\n');
-        
-        if (line) {
-            // Forward the message to all active SSE clients
-            // (In a strict 1:1 local deployment proxy, we can broadcast or track request ids if needed,
-            // but standard MCP proxy mostly broadcasts back to the single connected LLM client)
-            for (const [id, res] of clients.entries()) {
-                res.write(`event: message\ndata: ${line}\n\n`);
+    child.on('error', (err) => console.error('[Child Error]', err));
+    child.stderr.on('data', (data) => console.error('[Child Log]', data.toString().trim()));
+
+    let buffer = '';
+    child.stdout.on('data', (data) => {
+        buffer += data.toString();
+        let boundary = buffer.indexOf('\n');
+        while (boundary !== -1) {
+            const line = buffer.slice(0, boundary).trim();
+            buffer = buffer.slice(boundary + 1);
+            boundary = buffer.indexOf('\n');
+            
+            if (line) {
+                for (const [id, res] of clients.entries()) {
+                    res.write(`event: message\ndata: ${line}\n\n`);
+                }
             }
         }
-    }
-});
+    });
 
-child.on('close', (code) => {
-    console.log(`[Child] MCP server exited with code ${code}`);
-    // Close all SSE streams safely
-    for (const res of clients.values()) {
-        res.end();
+    child.on('close', (code) => {
+        console.log(`[Child] MCP server exited with code ${code}`);
+        child = null;
+        for (const res of clients.values()) {
+            res.end();
+        }
+        clients.clear();
+    });
+}
+
+function killChild() {
+    if (child) {
+        console.log(`[Proxy] Scaling to zero. Killing idle MCP process...`);
+        child.kill('SIGTERM');
+        child = null;
     }
-    process.exit(code);
-});
+}
 
 // SSE Endpoint
 app.get('/sse', (req, res) => {
@@ -68,11 +78,25 @@ app.get('/sse', (req, res) => {
     res.write(`event: endpoint\ndata: ${endpoint}\n\n`);
     
     clients.set(sessionId, res);
-    console.log(`[SSE] Client connected: ${sessionId}`);
+    console.log(`[SSE] Client connected: ${sessionId} (Active clients: ${clients.size})`);
+
+    // Wake the child up if it was asleep
+    if (idleTimeout) {
+        clearTimeout(idleTimeout);
+        idleTimeout = null;
+    }
+    spawnChild();
 
     req.on('close', () => {
-        console.log(`[SSE] Client disconnected: ${sessionId}`);
         clients.delete(sessionId);
+        console.log(`[SSE] Client disconnected: ${sessionId} (Active clients: ${clients.size})`);
+        
+        // If all clients disconnect, wait 10 seconds before killing process
+        if (clients.size === 0) {
+            idleTimeout = setTimeout(() => {
+                killChild();
+            }, 10000); // 10 second scale-to-zero debounce
+        }
     });
 });
 
@@ -81,6 +105,10 @@ app.post('/message', (req, res) => {
     const sessionId = req.query.sessionId;
     if (!sessionId || !clients.has(sessionId)) {
         return res.status(400).send('Invalid or missing sessionId');
+    }
+
+    if (!child) {
+        return res.status(503).send('Tool process is asleep/offline');
     }
 
     try {
@@ -94,8 +122,17 @@ app.post('/message', (req, res) => {
 });
 
 // Healthcheck
-app.get('/health', (req, res) => res.send('OK'));
+app.get('/health', (req, res) => {
+    const memory = process.memoryUsage();
+    res.json({
+        status: 'online',
+        uptime_seconds: Math.floor(process.uptime()),
+        active_connections: clients.size,
+        child_process_state: child ? 'ACTIVE' : 'ASLEEP',
+        ram_usage_mb: Math.round(memory.rss / 1024 / 1024)
+    });
+});
 
 app.listen(port, () => {
-    console.log(`[Proxy] Listening on HTTP port ${port}`);
+    console.log(`[Proxy] Lazy-Routing listening on HTTP port ${port}`);
 });

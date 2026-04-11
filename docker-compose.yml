@@ -4,6 +4,18 @@ networks:
     driver: bridge
 
 services:
+  # 0. Health Monitor Dashboard
+  health-monitor:
+    build:
+      context: ./mcp-health-monitor
+    ports:
+      - "8100:8080"
+    networks:
+      - mcp-network
+    restart: unless-stopped
+    environment:
+      - PORT=8080
+
   # 1. FileSystem MCP
   filesystem:
     build:

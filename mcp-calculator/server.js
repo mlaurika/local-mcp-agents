@@ -77,6 +77,17 @@ app.post('/message', async (req, res) => {
     }
 });
 
+app.get('/health', (req, res) => {
+    const memory = process.memoryUsage();
+    res.json({
+        status: 'online',
+        uptime_seconds: Math.floor(process.uptime()),
+        active_connections: sseTransport ? 1 : 0,
+        child_process_state: 'NATIVE',
+        ram_usage_mb: Math.round(memory.rss / 1024 / 1024)
+    });
+});
+
 app.listen(port, () => {
     console.log(`Node Calculator MCP Server listening on port ${port}`);
 });

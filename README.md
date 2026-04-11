@@ -14,8 +14,11 @@ A Docker Compose based "army" of localized Model Context Protocol (MCP) servers,
 
 3. **Spin up your Army:**
    ```bash
-   docker compose up -d
+   docker compose up -d --build
    ```
+
+4. **View the Dashboard 📊:**
+   Open a browser to `http://localhost:8100` to view the stunning, real-time Glassmorphic Health Monitor checking on the status of all your tools!
 
 ## 🛠️ Included Tools
 
