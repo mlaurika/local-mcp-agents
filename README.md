@@ -37,7 +37,20 @@ All servers mount their communication directly over HTTP/SSE.
 
 ## Connectivity
 
-Local LLM clients that support connecting via HTTP (SSE) can be pointed to the specific `localhost:[PORT]/sse` endpoints to connect and use these tools natively.
+Local LLM clients that support connecting via HTTP (SSE) can point to the specific endpoints to connect and use these tools seamlessly.
 
-For example, connecting to the calculator:
+*Note on Paths: While the legacy HTTP+SSE spec used separated `/sse` and `/message` endpoints, modern Streamable HTTP specifications recommend a unified `/mcp` path. These agent proxies wrap the standard `@modelcontextprotocol/sdk` legacy behavior, exposing `/sse`, but also intelligently compute relative paths to support proxy prefixes flawlessly.*
+
+### Single Machine Deployment (No Proxy)
+
+If you are just running on a single machine, you can connect directly to the exposed ports (`localhost:810x`).
+
+For example, connecting to the calculator natively:
 `http://localhost:8103/sse`
+
+### Split Node Deployment (Workstation + Remote Server)
+
+If you have a dual-node setup (e.g., Local Mac + Proxmox LXC Server):
+
+1. **Node 1 (Local):** Run `docker compose -f node1-docker-compose.yml up -d` to spin up a standalone file-system tool that safely edits files locally (Binding to `127.0.0.1:8101`). Connect your LLM to `http://localhost:8101/sse`.
+2. **Node 2 (Remote):** Run `docker compose -f node2-docker-compose.yml up -d` on your remote Debian LXC to host the heavy compute/API tools. Deploy `node2-nginx.conf` directly into `/etc/nginx/conf.d/` on the LXC to reverse-proxy port 80 dynamically across the stack! Connect to these securely via the proxy URL over Wireguard, e.g., `http://mcp.dhcp.ee/calculator/sse`.

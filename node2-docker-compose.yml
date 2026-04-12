@@ -1,0 +1,131 @@
+networks:
+  mcp-network:
+    driver: bridge
+
+services:
+  # Dashboard
+  health-monitor:
+    build:
+      context: ./mcp-health-monitor
+    ports:
+      - "127.0.0.1:8100:8080"
+    networks:
+      - mcp-network
+    restart: unless-stopped
+    environment:
+      - PORT=8080
+
+  # Filesystem (Local to Node 2)
+  filesystem:
+    build:
+      context: ./mcp-sse-proxy
+      dockerfile: Dockerfile
+    command: ["npx", "-y", "@modelcontextprotocol/server-filesystem", "/app/AI", "/app/GIT"]
+    ports:
+      - "127.0.0.1:8101:8080"
+    volumes:
+      - ~/AI:/app/AI
+      - ~/GIT:/app/GIT
+    networks:
+      - mcp-network
+    restart: unless-stopped
+    environment:
+      - PORT=8080
+
+  # Brave Search
+  brave-search:
+    build:
+      context: ./mcp-sse-proxy
+      dockerfile: Dockerfile
+    command: ["npx", "-y", "@modelcontextprotocol/server-brave-search"]
+    ports:
+      - "127.0.0.1:8102:8080"
+    networks:
+      - mcp-network
+    restart: unless-stopped
+    environment:
+      - BRAVE_API_KEY=${BRAVE_API_KEY}
+      - PORT=8080
+
+  # Calculator
+  calculator:
+    build:
+      context: ./mcp-calculator
+    ports:
+      - "127.0.0.1:8103:8080"
+    networks:
+      - mcp-network
+    restart: unless-stopped
+    environment:
+      - PORT=8080
+
+  # Memory
+  memory:
+    build:
+      context: ./mcp-sse-proxy
+      dockerfile: Dockerfile
+    command: ["npx", "-y", "@modelcontextprotocol/server-memory"]
+    ports:
+      - "127.0.0.1:8104:8080"
+    networks:
+      - mcp-network
+    restart: unless-stopped
+    environment:
+      - PORT=8080
+
+  # GitHub
+  github:
+    build:
+      context: ./mcp-sse-proxy
+      dockerfile: Dockerfile
+    command: ["npx", "-y", "@modelcontextprotocol/server-github"]
+    ports:
+      - "127.0.0.1:8105:8080"
+    networks:
+      - mcp-network
+    restart: unless-stopped
+    environment:
+      - GITHUB_PERSONAL_ACCESS_TOKEN=${GITHUB_PERSONAL_ACCESS_TOKEN}
+      - PORT=8080
+
+  # SQLite
+  sqlite:
+    build:
+      context: ./mcp-sqlite
+      dockerfile: Dockerfile
+    command: ["mcp-server-sqlite", "--db-path", "/app/data/mcp.db"]
+    ports:
+      - "127.0.0.1:8106:8080"
+    volumes:
+      - ./data:/app/data
+    networks:
+      - mcp-network
+    restart: unless-stopped
+    environment:
+      - PORT=8080
+
+  # Browser / Puppeteer
+  puppeteer:
+    build:
+      context: ./mcp-sse-proxy
+      dockerfile: Dockerfile.puppeteer
+    ports:
+      - "127.0.0.1:8107:8080"
+    networks:
+      - mcp-network
+    restart: unless-stopped
+    environment:
+      - PORT=8080
+
+  # Shell Sandbox
+  shell:
+    build:
+      context: ./mcp-shell
+      dockerfile: Dockerfile
+    ports:
+      - "127.0.0.1:8108:8080"
+    networks:
+      - mcp-network
+    restart: unless-stopped
+    environment:
+      - PORT=8080

@@ -1,0 +1,13 @@
+services:
+  filesystem:
+    build:
+      context: ./mcp-sse-proxy
+      dockerfile: Dockerfile
+    command: ["npx", "-y", "@modelcontextprotocol/server-filesystem", "/app/AI-Workspace"]
+    ports:
+      - "127.0.0.1:8101:8080"
+    volumes:
+      - ~/AI-Workspace:/app/AI-Workspace
+    restart: unless-stopped
+    environment:
+      - PORT=8080

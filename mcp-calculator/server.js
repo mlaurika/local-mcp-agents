@@ -61,7 +61,8 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
 let sseTransport = null;
 
 app.get('/sse', async (req, res) => {
-    sseTransport = new SSEServerTransport('/message', res);
+    const prefix = req.headers['x-forwarded-prefix'] || '';
+    sseTransport = new SSEServerTransport(`${prefix}/message`, res);
     await server.connect(sseTransport);
     
     res.on('close', () => {

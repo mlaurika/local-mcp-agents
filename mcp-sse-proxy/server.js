@@ -74,7 +74,8 @@ app.get('/sse', (req, res) => {
     res.setHeader('Connection', 'keep-alive');
     
     // Announce the message endpoint URL as per MCP SSE specification
-    const endpoint = `/message?sessionId=${sessionId}`;
+    const prefix = req.headers['x-forwarded-prefix'] || '';
+    const endpoint = `${prefix}/message?sessionId=${sessionId}`;
     res.write(`event: endpoint\ndata: ${endpoint}\n\n`);
     
     clients.set(sessionId, res);
