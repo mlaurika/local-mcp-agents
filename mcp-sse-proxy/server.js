@@ -23,9 +23,28 @@ function spawnChild() {
     if (child) return;
     
     console.log(`[Proxy] Waking up MCP process: ${cmd} ${args.join(' ')}`);
-    child = spawn(cmd, args, {
+
+    let finalArgs = [...args];
+    const env = { ...process.env };
+
+    // Force Puppeteer to run without sandbox AND in headless mode by injecting all known environment variable patterns.
+    // This ensures that regardless of how the @modelcontextprotocol/server-puppeteer 
+    // package is implemented, it receives the instruction to skip the sandbox and run headless.
+    if (cmd === 'npx' && args.includes('@modelcontextprotocol/server-puppeteer')) {
+        const launchOptions = JSON.stringify({ 
+            args: ['--no-sandbox', '--headless=new'],
+            headless: true 
+        });
+        env.PUPPETEER_LAUNCH_OPTIONS = launchOptions;
+        env.PUPPETEER_ARGS = '--no-sandbox --headless=new';
+        env.CHROME_ARGS = '--no-sandbox --headless=new';
+        env.CHROMIUM_ARGS = '--no-sandbox --headless=new';
+    }
+
+    child = spawn(cmd, finalArgs, {
         stdio: ['pipe', 'pipe', 'pipe'],
-        shell: true
+        shell: true,
+        env: env
     });
 
     child.on('error', (err) => console.error('[Child Error]', err));
