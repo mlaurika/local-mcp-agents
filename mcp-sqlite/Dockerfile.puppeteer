@@ -24,4 +24,6 @@ RUN npm install
 COPY server.js ./
 
 # The entrypoint launches the proxy wrapping the official puppeteer MCP server
-ENTRYPOINT ["node", "server.js", "npx", "-y", "@modelcontextprotocol/server-puppeteer"]
+# We add --no-sandbox here because even with a non-root user, 
+# many Docker environments (like yours) restrict namespace creation.
+ENTRYPOINT ["node", "server.js", "npx", "-y", "@modelcontextprotocol/server-puppeteer", "--no-sandbox"]
