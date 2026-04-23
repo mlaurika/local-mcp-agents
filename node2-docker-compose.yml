@@ -104,11 +104,11 @@ services:
     environment:
       - PORT=8080
 
-  # Browser / Puppeteer
-  puppeteer:
+  # Browser / Playwright
+  playwright:
     build:
       context: ./mcp-sse-proxy
-      dockerfile: Dockerfile.puppeteer
+      dockerfile: Dockerfile.playwright
     ports:
       - "127.0.0.1:8107:8080"
     networks:
@@ -129,3 +129,17 @@ services:
     restart: unless-stopped
     environment:
       - PORT=8080
+
+  # General Information
+  info:
+    build:
+      context: ./mcp-info
+    ports:
+      - "127.0.0.1:8109:8080"
+    networks:
+      - mcp-network
+    restart: unless-stopped
+    environment:
+      - PORT=8080
+      - USER_LOCATION=${USER_LOCATION:-Helsinki}
+      - USER_TIMEZONE=${USER_TIMEZONE:-Europe/Helsinki}

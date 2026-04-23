@@ -1,28 +1,31 @@
 {
   "mcpServers": {
     "local-filesystem": {
-      "url": "http://localhost:8101/sse"
+      "url": "http://mcp.dhcp.ee:8101/sse"
     },
     "local-brave-search": {
-      "url": "http://localhost:8102/sse"
+      "url": "http://mcp.dhcp.ee:8102/sse"
     },
     "local-calculator": {
-      "url": "http://localhost:8103/sse"
+      "url": "http://mcp.dhcp.ee:8103/sse"
     },
     "local-memory": {
-      "url": "http://localhost:8104/sse"
+      "url": "http://mcp.dhcp.ee:8104/sse"
     },
     "local-github": {
-      "url": "http://localhost:8105/sse"
+      "url": "http://mcp.dhcp.ee:8105/sse"
     },
     "local-sqlite": {
-      "url": "http://localhost:8106/sse"
+      "url": "http://mcp.dhcp.ee:8106/sse"
     },
     "local-browser": {
-      "url": "http://localhost:8107/sse"
+      "url": "http://mcp.dhcp.ee:8107/sse"
     },
     "local-sandbox-shell": {
-      "url": "http://localhost:8108/sse"
+      "url": "http://mcp.dhcp.ee:8108/sse"
+    },
+    "local-info": {
+      "url": "http://mcp.dhcp.ee:8109/sse"
     }
   }
 }

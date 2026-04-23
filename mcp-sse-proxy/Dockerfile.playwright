@@ -1,0 +1,12 @@
+FROM mcr.microsoft.com/playwright:v1.43.0-jammy
+
+WORKDIR /app
+
+# The base image already has Node.js and Playwright dependencies installed
+COPY package.json ./
+RUN npm install
+
+COPY server.js ./
+
+# The entrypoint launches the proxy wrapping the official playwright MCP server
+ENTRYPOINT ["node", "server.js", "npx", "-y", "@modelcontextprotocol/server-playwright"]

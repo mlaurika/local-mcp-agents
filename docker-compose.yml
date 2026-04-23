@@ -90,11 +90,11 @@ services:
     environment:
       - PORT=8080
 
-  # 7. Browser Automation MCP (Puppeteer)
-  puppeteer:
+  # 7. Browser Automation MCP (Playwright)
+  playwright:
     build:
       context: ./mcp-sse-proxy
-      dockerfile: Dockerfile.puppeteer
+      dockerfile: Dockerfile.playwright
     ports:
       - "8107:8080"
     networks:
@@ -130,3 +130,17 @@ services:
     environment:
       - BRAVE_API_KEY=${BRAVE_API_KEY}
       - PORT=8080
+
+  # 10. General Information MCP
+  info:
+    build:
+      context: ./mcp-info
+    ports:
+      - "8109:8080"
+    networks:
+      - mcp-network
+    restart: unless-stopped
+    environment:
+      - PORT=8080
+      - USER_LOCATION=${USER_LOCATION:-Helsinki}
+      - USER_TIMEZONE=${USER_TIMEZONE:-Europe/Helsinki}
