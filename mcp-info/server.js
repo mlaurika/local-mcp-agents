@@ -34,7 +34,7 @@ async function fetchWeather(place) {
 
 server.tool(
   "get_general_context",
-  "Returns a comprehensive context including current time, user location, and automatically resolved current weather.",
+  "Retrieves the agent's immediate environmental context, including the current system time, the user's detected geographic location, and real-time local weather data.",
   {},
   async () => {
     const now = new Date();
@@ -62,7 +62,7 @@ ${weatherStr}`;
 
 server.tool(
   "get_weather",
-  "Allows querying the weather for an arbitrary location using the FMI OpenAPI.",
+  "Fetches detailed, real-time meteorological data for any specified location using the Finnish Meteorological Institute (FMI) API. It returns temperature, wind speed, and humidity.",
   {
     place: z.string().describe("Name of the location to fetch weather for (e.g., Tampere, Oulu)")
   },

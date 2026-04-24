@@ -24,7 +24,7 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
         tools: [
             {
                 name: 'run_command',
-                description: 'Run a shell command safely inside a sandboxed Linux container.',
+                description: 'Executes arbitrary shell commands within a highly secure, isolated Linux sandbox container. It provides access to the container\'s filesystem and system utilities.',
                 inputSchema: {
                     type: 'object',
                     properties: {

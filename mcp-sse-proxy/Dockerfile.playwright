@@ -2,11 +2,18 @@ FROM mcr.microsoft.com/playwright:v1.43.0-jammy
 
 WORKDIR /app
 
-# The base image already has Node.js and Playwright dependencies installed
+# Install dependencies
 COPY package.json ./
 RUN npm install
 
+# Set up Playwright to use a specific, predictable path
+ENV PLAYWRIGHT_BROWSERS_PATH=/ms-playwright
+ENV PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=0
+
+# We will try to install 'chrome' specifically as requested by the error message
+RUN npx playwright install chrome
+
 COPY server.js ./
 
-# The entrypoint launches the proxy wrapping the official playwright MCP server
-ENTRYPOINT ["node", "server.js", "npx", "-y", "@modelcontextprotocol/server-playwright"]
+# Use the correct package name
+ENTRYPOINT ["node", "server.js", "npx", "-y", "@playwright/mcp"]

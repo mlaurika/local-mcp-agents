@@ -21,7 +21,7 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
         tools: [
             {
                 name: 'calculate',
-                description: 'Evaluate a mathematical expression safely.',
+                description: 'Performs complex mathematical computations and evaluates algebraic expressions using the mathjs library. Use this for arithmetic, trigonometry, calculus, or any symbolic math.',
                 inputSchema: {
                     type: 'object',
                     properties: {
