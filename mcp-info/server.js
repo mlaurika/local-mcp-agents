@@ -5,7 +5,7 @@ import { z } from "zod";
 
 const app = express();
 const port = process.env.PORT || 8080;
-const USER_LOCATION = process.env.USER_LOCATION || "Helsinki";
+const USER_PROFILE = process.env.USER_PROFILE || "Helsinki";
 const WEATHER_LOCATION = process.env.WEATHER_LOCATION || "Helsinki";
 const USER_TIMEZONE = process.env.USER_TIMEZONE || "Europe/Helsinki";
 
@@ -35,7 +35,7 @@ async function fetchWeather(place) {
 
 server.tool(
   "get_general_context",
-  "Retrieves the agent's immediate environmental context, including the current system time, the user's detected geographic location, and real-time local weather data.",
+  "Retrieves the agent's immediate environmental context, including the current system time, the user's profile/location, and real-time local weather data.",
   {},
   async () => {
     const now = new Date();
@@ -50,7 +50,7 @@ server.tool(
 
     const result = `Current General Context:
 Time: ${timeStr}
-User Location: ${USER_LOCATION}
+User Profile: ${USER_PROFILE}
 
 Weather Status:
 ${weatherStr}

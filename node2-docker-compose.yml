@@ -141,6 +141,6 @@ services:
     restart: unless-stopped
     environment:
       - PORT=8080
-      - USER_LOCATION=${USER_LOCATION:-Helsinki}
+      - USER_PROFILE=${USER_PROFILE:-Helsinki}
       - WEATHER_LOCATION=${WEATHER_LOCATION:-Helsinki}
       - USER_TIMEZONE=${USER_TIMEZONE:-Europe/Helsinki}
