@@ -6,6 +6,7 @@ import { z } from "zod";
 const app = express();
 const port = process.env.PORT || 8080;
 const USER_LOCATION = process.env.USER_LOCATION || "Helsinki";
+const WEATHER_LOCATION = process.env.WEATHER_LOCATION || "Helsinki";
 const USER_TIMEZONE = process.env.USER_TIMEZONE || "Europe/Helsinki";
 
 // Create MCP server
@@ -43,16 +44,18 @@ server.tool(
       weekday: 'long', year: 'numeric', month: 'long', day: 'numeric',
       hour: 'numeric', minute: 'numeric', second: 'numeric', timeZoneName: 'short'
     });
-    
+
     const timeStr = formatter.format(now);
-    const weatherStr = await fetchWeather(USER_LOCATION);
+    const weatherStr = await fetchWeather(WEATHER_LOCATION);
 
     const result = `Current General Context:
 Time: ${timeStr}
 User Location: ${USER_LOCATION}
 
 Weather Status:
-${weatherStr}`;
+${weatherStr}
+
+Reminder: If further specifics about the current situation or user are needed, perform a quick scan of Memory (using search_nodes or read_graph).`;
 
     return {
       content: [{ type: "text", text: result }]

@@ -142,4 +142,5 @@ services:
     environment:
       - PORT=8080
       - USER_LOCATION=${USER_LOCATION:-Helsinki}
+      - WEATHER_LOCATION=${WEATHER_LOCATION:-Helsinki}
       - USER_TIMEZONE=${USER_TIMEZONE:-Europe/Helsinki}
